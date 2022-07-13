@@ -21,41 +21,21 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
         child: Container(
           padding: const EdgeInsets.all(25),
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(40)),
-          child: timeSelector(),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(40),
+          ),
+          child: contents(),
         ),
       ),
     );
   }
 
-  Widget timeSelector() {
+  Widget contents() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         title(),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 160,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [headertext('hh'), headertext('mm')],
-              ),
-            ),
-            Flexible(
-              child: SizedBox(
-                height: 400,
-                child: Stack(
-                  children: [
-                    centerWidget(),
-                    timeScroll(),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+        timeSelector(),
         setDurationButton(),
       ],
     );
@@ -86,17 +66,29 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
     ]);
   }
 
-  Widget setDurationButton() {
-    return TextButton(
-      onPressed: () {},
-      child: Text(
-        'set duration'.toUpperCase(),
-        style: const TextStyle(
-          fontSize: 14,
-          color: TMColors.teal,
-          fontWeight: FontWeight.w500,
+  Widget timeSelector() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 160,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [headertext('hh'), headertext('mm')],
+          ),
         ),
-      ),
+        Flexible(
+          child: SizedBox(
+            height: 400,
+            child: Stack(
+              children: [
+                centerWidget(),
+                timeScroll(),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -120,6 +112,20 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
             color: Colors.black26,
             height: 0,
             fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
+  Widget setDurationButton() {
+    return TextButton(
+      onPressed: () {},
+      child: Text(
+        'set duration'.toUpperCase(),
+        style: const TextStyle(
+          fontSize: 14,
+          color: TMColors.teal,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

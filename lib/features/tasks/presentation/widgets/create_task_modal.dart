@@ -6,6 +6,7 @@ import 'package:taskmaster/features/tasks/presentation/widgets/task_details_inpu
 
 void openCreateTaskModal(BuildContext context) {
   Scaffold.of(context).showBottomSheet(
+    elevation: 50,
     (context) => const CreateTaskWidget(),
     backgroundColor: TMColors.teal,
     shape: const RoundedRectangleBorder(

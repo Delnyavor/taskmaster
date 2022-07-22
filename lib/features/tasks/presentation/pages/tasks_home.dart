@@ -17,46 +17,56 @@ class TasksHomeState extends State<TasksHome> {
     return Scaffold(
       appBar: appBar(),
       backgroundColor: TMColors.canvasWhite,
-      body: SafeArea(child: scrollView()),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: SafeArea(child: body()),
       bottomNavigationBar: const BottomAppBar(
         notchMargin: 5,
       ),
-      floatingActionButton: floatingActionButton(),
     );
   }
 
   Widget floatingActionButton() {
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-              color: Colors.white.withOpacity(0.21),
-              offset: const Offset(0, 0),
-              spreadRadius: 3,
-              blurRadius: 6),
-          BoxShadow(
-              color: TMColors.teal.withOpacity(1),
-              offset: const Offset(0, 0),
-              spreadRadius: -1,
-              blurRadius: 8),
-        ],
-      ),
-      child: Builder(
-        builder: (BuildContext newcontext) => FloatingActionButton(
-          elevation: 0,
-          backgroundColor: TMColors.teal,
-          onPressed: () {
-            openCreateTaskModal(newcontext);
-          },
-          child: const Icon(
-            Icons.add,
-            color: Colors.white,
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        height: 80,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            // BoxShadow(
+            //     color: Colors.white.withOpacity(0.21),
+            //     offset: const Offset(0, 0),
+            //     spreadRadius: 3,
+            //     blurRadius: 6),
+            // BoxShadow(
+            //     color: TMColors.teal.withOpacity(1),
+            //     offset: const Offset(0, 0),
+            //     spreadRadius: -1,
+            //     blurRadius: 8),
+          ],
+        ),
+        child: Builder(
+          builder: (BuildContext newcontext) => FloatingActionButton(
+            elevation: 0,
+            backgroundColor: TMColors.teal,
+            onPressed: () {
+              openCreateTaskModal(newcontext);
+            },
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget body() {
+    return Stack(
+      children: [
+        scrollView(),
+        floatingActionButton(),
+      ],
     );
   }
 
@@ -76,7 +86,7 @@ class TasksHomeState extends State<TasksHome> {
   AppBar appBar() {
     return AppBar(
       elevation: 0,
-      toolbarHeight: 1,
+      toolbarHeight: 0,
       backgroundColor: Colors.transparent,
       systemOverlayStyle: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -148,11 +158,11 @@ class TasksHomeState extends State<TasksHome> {
       child: Column(
         children: [
           const SizedBox(
-            height: 280,
-            width: 264,
+            height: 250,
+            width: 240,
             child: Placeholder(),
           ),
-          const SizedBox(height: 34),
+          const SizedBox(height: 28),
           text()
         ],
       ),
@@ -165,8 +175,7 @@ class TasksHomeState extends State<TasksHome> {
       child: Text(
         'Click to add tasks'.toUpperCase(),
         textAlign: TextAlign.left,
-        style: const TextStyle(
-            fontSize: 15, height: 1.5, color: TMColors.textLight),
+        style: const TextStyle(height: 1.5, color: TMColors.textLight),
       ),
     );
   }
@@ -215,7 +224,7 @@ class TasksHomeState extends State<TasksHome> {
 
   Decoration cardDecoration(bool selected) {
     return BoxDecoration(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(18),
       color: selected
           ? TMColors.teal.withOpacity(0.62)
           : TMColors.lavender.withOpacity(0.5),
@@ -224,7 +233,7 @@ class TasksHomeState extends State<TasksHome> {
             color: selected
                 ? TMColors.teal.withOpacity(0)
                 : TMColors.violet.withOpacity(0.23),
-            width: 3),
+            width: 2.6),
       ),
     );
   }

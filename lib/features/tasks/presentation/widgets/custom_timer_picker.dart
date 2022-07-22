@@ -10,8 +10,8 @@ class CustomTimerPicker extends StatefulWidget {
 }
 
 class _CustomTimerPickerState extends State<CustomTimerPicker> {
-  int selectedindex = 0;
-  int selectedindex2 = 0;
+  int hours = 0;
+  int minutes = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -101,24 +101,54 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
       width: 68,
       decoration: const BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: TMColors.textMedium, width: 0.5),
+          bottom: BorderSide(
+            color: TMColors.textMedium,
+            width: 0.5,
+          ),
         ),
       ),
       child: Text(
         text.toUpperCase(),
         textAlign: TextAlign.center,
         style: const TextStyle(
-            fontSize: 12,
-            color: Colors.black26,
-            height: 0,
-            fontWeight: FontWeight.w500),
+          height: 0,
+          fontSize: 12,
+          color: Colors.black26,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget timeScroll() {
+    return Container(
+      height: 400,
+      padding: const EdgeInsets.only(left: 40, right: 40),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TimeList(
+            isMinute: false,
+            onChanged: (value) {
+              hours = value;
+            },
+          ),
+          TimeList(
+            isMinute: true,
+            onChanged: (value) {
+              minutes = value;
+            },
+          ),
+        ],
       ),
     );
   }
 
   Widget setDurationButton() {
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        setDuration();
+      },
       child: Text(
         'set duration'.toUpperCase(),
         style: const TextStyle(
@@ -130,29 +160,9 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
     );
   }
 
-  Widget timeScroll() {
-    return Container(
-      padding: const EdgeInsets.only(left: 40, right: 40),
-      height: 400,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TimeList(
-            isMinute: false,
-            onChanged: (index) {
-              selectedindex = index;
-              setState(() {});
-            },
-          ),
-          TimeList(
-              isMinute: true,
-              onChanged: (index) {
-                selectedindex2 = index;
-                setState(() {});
-              }),
-        ],
-      ),
-    );
+  void setDuration() {
+    Duration duration = Duration(hours: hours, minutes: minutes);
+    Navigator.pop(context, duration);
   }
 
   Widget centerWidget() {
@@ -186,7 +196,7 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
 }
 
 class TimeList extends StatefulWidget {
-  final Function(int) onChanged;
+  final void Function(int) onChanged;
   final bool isMinute;
   const TimeList({Key? key, required this.onChanged, required this.isMinute})
       : super(key: key);
@@ -224,7 +234,7 @@ class TimeListState extends State<TimeList> {
       onSelectedItemChanged: (index) {
         setState(() {
           selectedIndex = index;
-          widget.onChanged(index);
+          widget.onChanged(widget.isMinute ? index * 15 : index);
         });
       },
     );

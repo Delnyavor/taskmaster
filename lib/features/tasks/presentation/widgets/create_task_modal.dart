@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:taskmaster/core/colors.dart';
+import 'package:taskmaster/core/duration_converter.dart';
 import 'package:taskmaster/features/tasks/presentation/widgets/custom_timer_picker.dart';
+import 'package:taskmaster/features/tasks/presentation/widgets/task_details_input.dart';
 
 void openCreateTaskModal(BuildContext context) {
   Scaffold.of(context).showBottomSheet(
-    // context: context,
-    (context) => CreateTaskWidget(),
+    (context) => const CreateTaskWidget(),
     backgroundColor: TMColors.teal,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
@@ -13,16 +14,24 @@ void openCreateTaskModal(BuildContext context) {
   );
 }
 
-class CreateTaskWidget extends StatelessWidget {
-  CreateTaskWidget({Key? key}) : super(key: key);
+class CreateTaskWidget extends StatefulWidget {
+  const CreateTaskWidget({Key? key}) : super(key: key);
 
+  @override
+  State<CreateTaskWidget> createState() => _CreateTaskWidgetState();
+}
+
+class _CreateTaskWidgetState extends State<CreateTaskWidget> {
   final TextEditingController controller = TextEditingController();
+
   final labelStyle = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 15,
     height: 1.5,
     color: Colors.black.withOpacity(0.27),
   );
+
+  Duration time = Duration.zero;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +46,7 @@ class CreateTaskWidget extends StatelessWidget {
 
   Widget inputForm(context) {
     return Container(
-      padding: const EdgeInsets.all(44),
+      padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(40),
@@ -45,9 +54,8 @@ class CreateTaskWidget extends StatelessWidget {
       child: Column(
         children: [
           label(),
-          titleField(),
-          addNoteButton(),
-          durationDisplay(context),
+          const TaskInputForm(),
+          durationWidget(context),
         ],
       ),
     );
@@ -57,7 +65,7 @@ class CreateTaskWidget extends StatelessWidget {
     return Row(
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 11.0),
+          padding: const EdgeInsets.only(bottom: 20.0),
           child: Text(
             'create task'.toUpperCase(),
             textAlign: TextAlign.left,
@@ -97,69 +105,45 @@ class CreateTaskWidget extends StatelessWidget {
     );
   }
 
-  Widget addNoteButton() {
-    return TextButton(
-      onPressed: () {},
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          const Icon(
-            Icons.add,
-            color: TMColors.textLight,
-          ),
-          Text(
-            'Add note'.toUpperCase(),
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 15,
-              height: 1.5,
-              color: TMColors.textLight,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget controls() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 44, vertical: 13),
+      padding: const EdgeInsets.symmetric(horizontal: 44, vertical: 15),
       child: Row(
         children: [
-          Expanded(
-            child: TextButton(
-              onPressed: () {},
-              child: Text(
-                'Delete'.toUpperCase(),
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 15,
-                  height: 1.5,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
+          // Expanded(
+          //   child: TextButton(
+          //     onPressed: () {},
+          //     style: TextButton.styleFrom(
+          //       padding: const EdgeInsets.symmetric(vertical: 14),
+          //     ),
+          //     child: Text(
+          //       'Cancel'.toUpperCase(),
+          //       textAlign: TextAlign.left,
+          //       style: const TextStyle(
+          //         fontWeight: FontWeight.w500,
+          //         fontSize: 14,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Expanded(
             child: TextButton(
               onPressed: () {},
               style: TextButton.styleFrom(
-                backgroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 17),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-              ),
+                  // backgroundColor: Colors.white,
+                  // padding: const EdgeInsets.symmetric(vertical: 14),
+                  // shape: RoundedRectangleBorder(
+                  //   borderRadius: BorderRadius.circular(50),
+                  // ),
+                  ),
               child: Text(
                 'Add task'.toUpperCase(),
                 textAlign: TextAlign.left,
                 style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 15,
-                  height: 1.5,
-                  color: TMColors.teal,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: TMColors.canvasWhite,
                 ),
               ),
             ),
@@ -169,19 +153,20 @@ class CreateTaskWidget extends StatelessWidget {
     );
   }
 
-  Widget durationDisplay(BuildContext context) {
+  Widget durationWidget(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        showDialog(context: context, builder: (context) => timerPicker());
+        showPicker();
       },
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
         decoration: BoxDecoration(
           color: TMColors.canvasWhite,
-          border: Border.all(color: TMColors.textLight),
+          border: Border.all(color: TMColors.textLight, width: 0.5),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Duration',
@@ -194,17 +179,33 @@ class CreateTaskWidget extends StatelessWidget {
     );
   }
 
-  Widget durationText() {
-    var duration = const Duration(seconds: 210);
-    return Text(duration.inMinutes.toString());
+  void showPicker() async {
+    Duration? data = await showDialog<Duration>(
+      context: context,
+      builder: (context) {
+        return const CustomTimerPicker();
+      },
+    );
+
+    if (time == Duration.zero) {
+      setState(() {
+        time = data ?? Duration.zero;
+      });
+    }
   }
 
-  Widget timerPicker() {
-    return const CustomTimerPicker();
-    // return CupertinoTimerPicker(
-    //   mode: CupertinoTimerPickerMode.ms,
-    //   onTimerDurationChanged: (Duration duration) {},
-    //   backgroundColor: Colors.white,
-    // );
+  Widget durationText() {
+    String d = DurationConverter(time).convertToHHMMString();
+    return Text(
+      d,
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        fontSize: 32,
+        color: TMColors.textLight,
+        height: 0,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 1,
+      ),
+    );
   }
 }

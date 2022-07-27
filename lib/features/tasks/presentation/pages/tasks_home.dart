@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:taskmaster/core/colors.dart';
 import 'package:taskmaster/core/scroll_behaviour.dart';
 import 'package:taskmaster/features/tasks/presentation/widgets/create_task_modal.dart';
+import 'package:taskmaster/features/tasks/presentation/widgets/tasks_list.dart';
 
 class TasksHome extends StatefulWidget {
   const TasksHome({Key? key}) : super(key: key);
@@ -16,10 +17,23 @@ class TasksHomeState extends State<TasksHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(),
-      backgroundColor: TMColors.canvasWhite,
+      backgroundColor: Colors.white,
       body: SafeArea(child: body()),
       bottomNavigationBar: const BottomAppBar(
         notchMargin: 5,
+      ),
+    );
+  }
+
+  AppBar appBar() {
+    return AppBar(
+      elevation: 0,
+      toolbarHeight: 0,
+      backgroundColor: Colors.transparent,
+      systemOverlayStyle: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
       ),
     );
   }
@@ -29,20 +43,20 @@ class TasksHomeState extends State<TasksHome> {
       alignment: Alignment.bottomCenter,
       child: Container(
         height: 80,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
-          boxShadow: [
-            // BoxShadow(
-            //     color: Colors.white.withOpacity(0.21),
-            //     offset: const Offset(0, 0),
-            //     spreadRadius: 3,
-            //     blurRadius: 6),
-            // BoxShadow(
-            //     color: TMColors.teal.withOpacity(1),
-            //     offset: const Offset(0, 0),
-            //     spreadRadius: -1,
-            //     blurRadius: 8),
-          ],
+          // boxShadow: [
+          // BoxShadow(
+          //     color: Colors.white.withOpacity(0.21),
+          //     offset: const Offset(0, 0),
+          //     spreadRadius: 3,
+          //     blurRadius: 6),
+          // BoxShadow(
+          //     color: TMColors.teal.withOpacity(1),
+          //     offset: const Offset(0, 0),
+          //     spreadRadius: -1,
+          //     blurRadius: 8),
+          // ],
         ),
         child: Builder(
           builder: (BuildContext newcontext) => FloatingActionButton(
@@ -64,6 +78,7 @@ class TasksHomeState extends State<TasksHome> {
   Widget body() {
     return Stack(
       children: [
+        background(),
         scrollView(),
         floatingActionButton(),
       ],
@@ -77,21 +92,22 @@ class TasksHomeState extends State<TasksHome> {
         slivers: [
           sliverAppBar(),
           calendar(),
-          image(),
+          tasksWidget(),
+          // image(),
         ],
       ),
     );
   }
 
-  AppBar appBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 0,
-      backgroundColor: Colors.transparent,
-      systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
+  Widget background() {
+    return const DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            TMColors.canvasWhite,
+            Color(0xFF000000),
+          ],
+        ),
       ),
     );
   }
@@ -151,6 +167,10 @@ class TasksHomeState extends State<TasksHome> {
         ),
       ],
     );
+  }
+
+  Widget tasksWidget() {
+    return TasksList();
   }
 
   Widget image() {

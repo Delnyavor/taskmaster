@@ -17,7 +17,30 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      home: const TasksHome(),
+      home: const Landing(),
+    );
+  }
+}
+
+class Landing extends StatelessWidget {
+  const Landing({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: TextButton(
+          child: const Text('Click'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const TasksHome(),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

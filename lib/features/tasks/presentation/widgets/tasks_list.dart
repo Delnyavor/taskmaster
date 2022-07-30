@@ -24,7 +24,6 @@ class _TasksListState extends State<TasksList> {
   }
 
   void onReorder(int oldIndex, int newIndex) {
-    print("oldindex: $oldIndex newindex: $newIndex");
     setState(() {
       if (oldIndex < newIndex) {
         newIndex -= 1;
@@ -48,17 +47,11 @@ class _TasksListState extends State<TasksList> {
   }
 
   Widget proxyDecoration(Widget child, int index, Animation<double> animation) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 5,
-              spreadRadius: -2)
-        ],
-      ),
-      child: child,
+    return TaskWidget(
+      key: child.key,
+      index: index,
+      text: list[index],
+      ordering: true,
     );
   }
 }
@@ -66,50 +59,123 @@ class _TasksListState extends State<TasksList> {
 class TaskWidget extends StatefulWidget {
   final int index;
   final String text;
+  final bool ordering;
 
-  const TaskWidget({Key? key, required this.index, required this.text})
+  const TaskWidget(
+      {Key? key,
+      required this.index,
+      required this.text,
+      this.ordering = false})
       : super(key: key);
 
   @override
   State<TaskWidget> createState() => _TaskWidgetState();
 }
 
-class _TaskWidgetState extends State<TaskWidget> {
+class _TaskWidgetState extends State<TaskWidget> with TickerProviderStateMixin {
+  CrossFadeState crossFadeState = CrossFadeState.showFirst;
+
+  late AnimationController controller;
+  late Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+
+    animation = Tween<double>(begin: 1.0, end: 0.0).animate(controller);
+  }
+
+  void toggleState() {
+    setState(() {
+      if (crossFadeState == CrossFadeState.showFirst) {
+        crossFadeState = CrossFadeState.showSecond;
+      } else {
+        crossFadeState = CrossFadeState.showFirst;
+      }
+    });
+  }
+
+  void animate() {
+    controller.forward().whenComplete(() => controller.reverse());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 38),
-      child: Material(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(widget.text),
-              trailing(),
-            ],
-          ),
-        ),
+    return Material(
+      color: Colors.transparent,
+      child: GestureDetector(
+        onDoubleTap: toggleState,
+        child: taskBody(),
       ),
     );
   }
 
-  Widget trailing() {
-    return ReorderableDragStartListener(
-      child: IconButton(
-        icon: const Icon(
-          Icons.drag_handle_rounded,
-          color: Color(0xFFD2DDFB),
-          size: 32,
+  Widget taskBody() {
+    return Container(
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 38),
+        padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          boxShadow: [
+            widget.ordering
+                ? BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    spreadRadius: -5,
+                    blurRadius: 8,
+                    // offset: Offset(0, 2),
+                  )
+                : const BoxShadow(
+                    color: Colors.transparent,
+                  ),
+          ],
         ),
-        onPressed: () {
-          print(widget.key);
-          print(widget.index);
-        },
+        child: content());
+  }
+
+  Widget content() {
+    return AnimatedCrossFade(
+      firstChild: header(),
+      secondChild: Column(children: [header(), header()]),
+      crossFadeState: crossFadeState,
+      duration: const Duration(milliseconds: 200),
+    );
+  }
+
+  Widget header() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(widget.text),
+        trailing(),
+      ],
+    );
+  }
+
+  Widget trailing() {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) => ScaleTransition(
+        scale: animation,
+        child: ReorderableDragStartListener(
+          child: IconButton(
+            icon: const Icon(
+              Icons.drag_handle_rounded,
+              color: Color(0xFFD2DDFB),
+              size: 32,
+            ),
+            onPressed: () {
+              // print(widget.key);
+              // print(widget.text);
+            },
+          ),
+          index: widget.index,
+        ),
       ),
-      index: widget.index,
     );
   }
 }

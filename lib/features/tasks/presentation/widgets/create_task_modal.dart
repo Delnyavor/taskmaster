@@ -196,7 +196,7 @@ class _CreateTaskWidgetState extends State<CreateTaskWidget> {
   }
 
   Widget durationText() {
-    String d = DurationConverter(time).convertToHHMMString();
+    String d = DurationConverter(time).convertToHHMM();
     return Text(
       d,
       textAlign: TextAlign.center,

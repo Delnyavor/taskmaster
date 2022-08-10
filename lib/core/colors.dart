@@ -6,6 +6,8 @@ class TMColors {
 
   static const Color textLight = Color(0xFF909CC6);
   static const Color textMedium = Color(0xFF707070);
+  static const Color textPrimary = Color(0xFF4C5369);
+
   static const Color lavender = Color(0xFFA4B0FF);
   static const Color violet = Color(0xFF647AFE);
   static const Color rouge = Color(0xFFF4456D);

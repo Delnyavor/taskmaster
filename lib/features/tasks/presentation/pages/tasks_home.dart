@@ -4,6 +4,7 @@ import 'package:taskmaster/core/colors.dart';
 import 'package:taskmaster/core/scroll_behaviour.dart';
 import 'package:taskmaster/features/tasks/presentation/widgets/calendar_card.dart';
 import 'package:taskmaster/features/tasks/presentation/widgets/create_task_modal.dart';
+import 'package:taskmaster/features/tasks/presentation/widgets/task_preveiw.dart';
 import 'package:taskmaster/features/tasks/presentation/widgets/tasks_header.dart';
 import 'package:taskmaster/features/tasks/presentation/widgets/tasks_list.dart';
 
@@ -62,7 +63,7 @@ class TasksHomeState extends State<TasksHome> {
             elevation: 0,
             backgroundColor: TMColors.teal,
             onPressed: () {
-              openCreateTaskModal(newcontext);
+              openPreviewTaskModal(newcontext);
             },
             child: const Icon(
               Icons.add,

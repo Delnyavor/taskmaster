@@ -41,7 +41,7 @@ class _SessionPageState extends State<SessionPage> {
         ),
       ),
       body: Column(
-        children: [const Dial(), label(), tasks()],
+        children: [Dial(), label(), tasks()],
       ),
     );
   }

@@ -4,12 +4,12 @@ import 'package:taskmaster/features/tasks/domain/repository/task_repository.dart
 import '../../../../core/error/failures.dart';
 import '../entities/task.dart';
 
-class GetAllTasks {
+class UpdateTask {
   final TaskRepository repository;
 
-  GetAllTasks(this.repository);
+  UpdateTask(this.repository);
 
-  Future<dartz.Either<Failure, List<Task>>> execute() async {
-    return await repository.getAllTasks();
+  Future<dartz.Either<Failure, Task>> execute(Task task) async {
+    return await repository.updateTask(task);
   }
 }

@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class Task extends Equatable {
   final String name;
-  final Duration duration;
+  final int duration;
   final String description;
   final bool? isCompleted;
   final bool? isInSession;

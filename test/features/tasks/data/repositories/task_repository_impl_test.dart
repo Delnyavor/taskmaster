@@ -55,7 +55,7 @@ void main() {
     });
   }
 
-  group('get task', () {
+  group('GET TASK', () {
     test('check if the device is online', () async {
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
 
@@ -125,6 +125,104 @@ void main() {
         verifyZeroInteractions(mockRemoteDataSource);
         verify(mockLocalDataSource.getTask(id));
         expect(result, equals(const dartz.Left(CacheFailure())));
+      });
+    });
+  });
+
+  ///TEST GROUP FOR TASK CREATION
+  group('CREATE TASK', () {
+    runTestsOnline(() {
+      test('should return data when call to local cache is successful',
+          () async {
+        when(mockLocalDataSource.cacheTask(task))
+            .thenAnswer((_) async => taskModel);
+        when(mockRemoteDataSource.createTask(task))
+            .thenAnswer((_) async => task);
+
+        final result = await repository.createTask(task);
+
+        verify(mockLocalDataSource.cacheTask(task));
+        expect(result, const dartz.Right(task));
+      });
+
+      test('should return data when call to remote data source is successful',
+          () async {
+        when(mockLocalDataSource.cacheTask(task))
+            .thenAnswer((_) async => taskModel);
+        when(mockRemoteDataSource.createTask(task))
+            .thenAnswer((_) async => task);
+
+        final result = await repository.createTask(task);
+
+        verify(mockLocalDataSource.cacheTask(task));
+        verify(mockRemoteDataSource.createTask(task));
+        expect(result, const dartz.Right(task));
+      });
+      test(
+          'should return cache failure when the call to local data source is unsuccessful',
+          () async {
+        when(mockLocalDataSource.cacheTask(task)).thenThrow(CacheException());
+
+        final result = await repository.createTask(task);
+
+        verifyZeroInteractions(mockRemoteDataSource);
+        expect(result, const dartz.Left(CacheFailure()));
+      });
+
+      test(
+          'should return server failure when the call to remote data source is unsuccessful',
+          () async {
+        when(mockLocalDataSource.cacheTask(task))
+            .thenAnswer((_) async => taskModel);
+        when(mockRemoteDataSource.createTask(task))
+            .thenThrow(ServerException());
+
+        final result = await repository.createTask(task);
+
+        verify(mockLocalDataSource.cacheTask(task));
+        verify(mockRemoteDataSource.createTask(task));
+        expect(result, const dartz.Left(ServerFailure()));
+      });
+    });
+
+    runTestsOffline(() {
+      test('should save to local cache only in when offline', () async {
+        when(mockLocalDataSource.cacheTask(task))
+            .thenAnswer((_) async => taskModel);
+
+        final result = await repository.createTask(task);
+
+        verify(mockLocalDataSource.cacheTask(task));
+        verifyZeroInteractions(mockRemoteDataSource);
+        expect(result, const dartz.Right(task));
+      });
+
+      test('should return cache failure when the local cache is unsuccessful',
+          () async {
+        when(mockLocalDataSource.cacheTask(task)).thenThrow(CacheException());
+
+        final result = await repository.createTask(task);
+
+        verify(mockLocalDataSource.cacheTask(task));
+        verifyZeroInteractions(mockRemoteDataSource);
+        expect(result, const dartz.Left(CacheFailure()));
+      });
+    });
+  });
+
+  group('DELETE TASK', () {
+    runTestsOnline(() {
+      test('should return true when task deletion was successful', () async {
+        when(mockLocalDataSource.deleteCachedTask(id))
+            .thenAnswer((_) async => true);
+        when(mockLocalDataSource.getTask(id)).thenAnswer((_) async => null);
+
+        when(mockRemoteDataSource.deleteTask(id)).thenAnswer((_) async => true);
+        when(mockRemoteDataSource.getTask(id)).thenAnswer((_) async => null);
+
+        final result = await repository.deleteTask(id);
+
+        expect(result, const dartz.Right(true));
       });
     });
   });

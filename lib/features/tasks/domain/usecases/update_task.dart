@@ -9,7 +9,7 @@ class UpdateTask {
 
   UpdateTask(this.repository);
 
-  Future<dartz.Either<Failure, Task>> execute(Task task) async {
+  Future<dartz.Either<Failure, Task?>?>? execute(Task task) async {
     return await repository.updateTask(task);
   }
 }

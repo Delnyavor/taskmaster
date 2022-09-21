@@ -9,7 +9,7 @@ class DeleteTask {
 
   DeleteTask(this.repository);
 
-  Future<dartz.Either<Failure, Task>> execute(int id) async {
+  Future<dartz.Either<Failure, bool?>?>? execute(int id) async {
     return await repository.deleteTask(id);
   }
 }

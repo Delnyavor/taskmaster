@@ -19,21 +19,48 @@ class TaskRepositoryImpl implements TaskRepository {
       required this.networkInfo});
 
   @override
-  Future<dartz.Either<Failure, Task>> createTask(Task task) {
-    // TODO: implement createTask
-    throw UnimplementedError();
+  Future<dartz.Either<Failure, Task?>>? createTask(Task task) async {
+    if (await networkInfo.isConnected!) {
+      try {
+        final localResult = await localDataSource.cacheTask(task);
+
+        await remoteDataSource.createTask(localResult as Task);
+        return dartz.Right(localResult);
+      } on ServerException catch (_) {
+        return const dartz.Left(ServerFailure());
+      } on CacheException catch (_) {
+        return const dartz.Left(CacheFailure());
+      }
+    } else {
+      try {
+        final localResult = await localDataSource.cacheTask(task);
+        return dartz.Right(localResult);
+      } on CacheException catch (_) {
+        return const dartz.Left(CacheFailure());
+      }
+    }
   }
 
   @override
-  Future<dartz.Either<Failure, Task>> deleteTask(int id) {
-    // TODO: implement deleteTask
-    throw UnimplementedError();
-  }
+  Future<dartz.Either<Failure, List<Task?>?>>? getAllTasks() async {
+    if (await networkInfo.isConnected!) {
+      try {
+        final result = await remoteDataSource.getAllTasks();
 
-  @override
-  Future<dartz.Either<Failure, List<Task>>> getAllTasks() {
-    // TODO: implement getAllTasks
-    throw UnimplementedError();
+        //TODO: spawn isolatess to cache individual data
+        // await localDataSource.cacheTask(result);
+
+        return dartz.Right(result);
+      } on ServerException catch (_) {
+        return const dartz.Left(ServerFailure());
+      }
+    } else {
+      try {
+        return dartz.Right(await localDataSource.getAllTasks());
+      } on CacheException catch (_) {
+        return const dartz.Left(CacheFailure());
+      }
+    }
   }
 
   @override
@@ -43,22 +70,60 @@ class TaskRepositoryImpl implements TaskRepository {
         final result = await remoteDataSource.getTask(id);
         await localDataSource.cacheTask(result);
         return dartz.Right(result);
-      } on ServerException catch (e) {
-        print(e);
+      } on ServerException catch (_) {
         return const dartz.Left(ServerFailure());
       }
     } else {
       try {
         return dartz.Right(await localDataSource.getTask(id));
-      } on CacheException catch (e) {
-        return dartz.Left(CacheFailure());
+      } on CacheException catch (_) {
+        return const dartz.Left(CacheFailure());
       }
     }
   }
 
   @override
-  Future<dartz.Either<Failure, Task>> updateTask(Task task) {
-    // TODO: implement updateTask
-    throw UnimplementedError();
+  Future<dartz.Either<Failure, Task?>>? updateTask(Task task) async {
+    if (await networkInfo.isConnected!) {
+      try {
+        final result = await remoteDataSource.updateTask(task);
+        await localDataSource.updateTask(task);
+        return dartz.Right(result);
+      } on ServerException catch (_) {
+        return const dartz.Left(ServerFailure());
+      } on CacheException catch (_) {
+        return const dartz.Left(CacheFailure());
+      }
+    } else {
+      try {
+        final localResult = await localDataSource.cacheTask(task);
+        return dartz.Right(localResult);
+      } on CacheException catch (_) {
+        return const dartz.Left(CacheFailure());
+      }
+    }
+  }
+
+  @override
+  Future<dartz.Either<Failure, bool?>>? deleteTask(int id) async {
+    if (await networkInfo.isConnected!) {
+      try {
+        //TODO: what should the deletion success payload be?
+        await remoteDataSource.deleteTask(id);
+        final remoteCheck = await remoteDataSource.getTask(id);
+
+        await localDataSource.deleteCachedTask(id);
+        final localCheck = await localDataSource.getTask(id);
+
+        return dartz.Right(remoteCheck == null && localCheck == null);
+      } on ServerException {
+        return const dartz.Left(ServerFailure());
+      } on CacheException {
+        return const dartz.Left(CacheFailure());
+      }
+    } else {
+      return const dartz.Left(
+          ServerFailure(message: "Could not connect to the internet"));
+    }
   }
 }

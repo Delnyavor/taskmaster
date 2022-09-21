@@ -9,7 +9,7 @@ class GetAllTasks {
 
   GetAllTasks(this.repository);
 
-  Future<dartz.Either<Failure, List<Task>>> execute() async {
+  Future<dartz.Either<Failure, List<Task?>?>?>? execute() async {
     return await repository.getAllTasks();
   }
 }

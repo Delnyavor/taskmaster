@@ -24,5 +24,5 @@ abstract class TaskRemoteDataSource {
   ///Calls the [EndPoint endpoint]
   ///
   ///Throws a [ServerException] for all error codes
-  Future<Task?>? deleteTask(int id);
+  Future<bool?>? deleteTask(int id);
 }

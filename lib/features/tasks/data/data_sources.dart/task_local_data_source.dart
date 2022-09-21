@@ -26,5 +26,10 @@ abstract class TaskLocalDataSource {
   ///deletes the cached [TaskModel] saved on the local device
   ///
   ///Throws [CacheException] if not data is present
-  Future<TaskModel> deleteCachedTask(int id);
+  Future<bool?>? deleteCachedTask(int id);
+
+  ///checks the local database for any unsynced data and
+  ///pushes them to the remote store
+  ///
+  Future<void> syncDatabase();
 }

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:taskmaster/core/error/exceptions.dart';
 import 'package:taskmaster/core/error/failures.dart';
-import 'package:taskmaster/core/platform/network_info.dart';
+import 'package:taskmaster/core/network/network_info.dart';
 import 'package:taskmaster/features/tasks/data/data_sources.dart/task_local_data_source.dart';
 import 'package:taskmaster/features/tasks/data/data_sources.dart/task_remote_data_source.dart';
 import 'package:taskmaster/features/tasks/data/models/task_model.dart';

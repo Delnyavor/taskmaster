@@ -1,5 +1,5 @@
 import 'dart:io';
 
-String fixture(String name) {
+String readFixture(String name) {
   return File('./test/fixtures/$name').readAsStringSync();
 }

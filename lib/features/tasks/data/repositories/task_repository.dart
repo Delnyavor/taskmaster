@@ -4,7 +4,7 @@ import 'package:taskmaster/core/error/failures.dart';
 import 'package:dartz/dartz.dart' as dartz;
 import 'package:taskmaster/features/tasks/domain/repository/task_repository.dart';
 
-import '../../../../core/platform/network_info.dart';
+import '../../../../core/network/network_info.dart';
 import '../data_sources.dart/task_local_data_source.dart';
 import '../data_sources.dart/task_remote_data_source.dart';
 

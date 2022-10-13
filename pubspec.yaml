@@ -18,6 +18,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
+  # sdk: ">3.0.0"
   sdk: ">=2.17.0 <3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
@@ -37,6 +38,8 @@ dependencies:
   lottie: ^1.4.0
   vector_math: ^2.1.2
   mockito: ^5.3.0
+  data_connection_checker: ^0.3.4
+  # internet_connectivity_checker: ^0.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
